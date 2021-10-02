@@ -15,6 +15,7 @@
 #include <thread>
 #include <fstream>
 #include <filesystem>
+#include <algorithm>
 
 using namespace std;
 using namespace std::__fs::filesystem;
@@ -32,35 +33,56 @@ unsigned long long CountWordsInStr (unsigned long long &countOfWords, string str
 
 unsigned long long CountSpesialWordInStr (unsigned long long &countOfSpesialWords, string str, string word) {
     string s = "";
-    for ( auto i = 0;i<str.size();i++ ) {
- 
-            if (str[i] == ' ') {
-                s = str.substr(0, i);
-                str.erase(0,i-1);
-                if (s == word)
-                    countOfSpesialWords++;
-            }
+    vector<char> del = {' ','.',',','-','?','!', ';', ':', ')', '(', '"'};
+    for (auto i =0;i< str.size();i++) {
+        
+        if (find(del.cbegin(), del.cend(), str[i])==del.cend()) {
+            s += str[i];
+        }
+        else if (s == word) {
+            countOfSpesialWords++;
+            s = "";
+        }
+        else {
+            s = "";
+        }
     }
-  
     return countOfSpesialWords;
 }
 
 void tread1(string filename){
     ifstream file;
+    thread::id id;
     file.open(filename);
     string str = "", s;
     unsigned long long countOfWords = 0;
     unsigned long long countOfSpesialWords = 0;
-    while(true)
+    thread thread_array[4];
+  //  thread_array[0] = thread(CountWordsInStr, countOfWords, str);
+    for (int i = 1; i < 4; i++) {
+            thread_array[i] = thread(CountSpesialWordInStr, countOfSpesialWords,ref(countOfWords), str);
+    }
+    for (int i = 1; i < 4; i++) {
+           if (thread_array[i].joinable()) {
+               id = thread_array[i].get_id();
+               thread_array[i].join();
+               cout << "Thread with id " << id << " finished. With result "<<countOfSpesialWords<<"\n";
+           }
+    }
+  //  thread th(CountWordsInStr,ref(countOfWords), str);
+   // int i =0;
+    while(1)
     {
         getline(file, str, '\n');
-        CountWordsInStr(countOfWords, str);
-        CountSpesialWordInStr(countOfSpesialWords, str, "да");
+      //  i++;
+       // CountWordsInStr(countOfWords, str);
+     //   CountSpesialWordInStr(countOfSpesialWords, str, "Катя");
         if (file.eof()) break;
     }
     cout <<"countOfSpesialWords= "<<countOfSpesialWords<< endl;
     cout <<"countOfWords= "<<countOfWords<< endl;
     file.close();
+  //  th.join();
 }
 
 int main() {
@@ -71,8 +93,8 @@ int main() {
     for(auto i = 0; i< vectorOfFiles.size();i++) {
         cout << vectorOfFiles[i]<< endl;
     }
-    for(auto i = 0; i< vectorOfFiles.size();i++) {
-        tread1(vectorOfFiles[i]);
-    }
+    //for(auto i = 0; i< vectorOfFiles.size();i++) {
+        tread1(vectorOfFiles[0]);
+   // }
     return 0;
 }
