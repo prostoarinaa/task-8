@@ -88,7 +88,7 @@
 		4E8DF7F22708700200F07EC5 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1250;
+				LastUpgradeCheck = 1300;
 				TargetAttributes = {
 					4E8DF7F92708700200F07EC5 = {
 						CreatedOnToolsVersion = 12.5.1;
@@ -239,6 +239,7 @@
 		4E8DF8022708700300F07EC5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -247,6 +248,7 @@
 		4E8DF8032708700300F07EC5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
