@@ -18,6 +18,9 @@
 #include <algorithm>
 #include <mutex>
 #include <chrono>
+#define OUT(vecofThread, file_name, time, value, Word1, value1, Word2, value2, Word3, value3)(for (int i;i<vecofThread.size();i++) { cout << "<" << vecofThread[i] << "> ||"} <<  << file_name << "> || Time: <" << time << ">  || Common: <" << value << "> | <" << Word1 << ">: <" << value1 << "> |  <" << Word2 << ">: <" << value2 << "> | <" << Word3 << ">: <" << value3 << ">" << endl << endl)
+
+//#define: <thread_id> || <file_name> || Start_time: <HH:MM:SS>  || Finish_time: <HH:MM:SS>  || Common: <value> | <Word1>: <value> |  <Word2>: <value> | <Word3>: <value>
 
 using namespace std;
 using namespace std::chrono;
@@ -55,15 +58,15 @@ unsigned long long CountSpesialWordInStr (unsigned long long &countOfSpesialWord
     return countOfSpesialWords;
 }
 
-void tread(string filename){
+void tread(string filename, vector<thread::id>& vecOfThreadid, string word1, string word2, string word3,  unsigned long long& countOfWords,
+           unsigned long long& countOfSpesialWords1,
+                              unsigned long long& countOfSpesialWords2,
+                              unsigned long long& countOfSpesialWords3){
     ifstream file;
     thread::id id;
     file.open(filename);
-    string str = "", word1 = "Annotation", word2 = "Катя", word3 = "гроза";
-    unsigned long long countOfWords = 0;
-    unsigned long long countOfSpesialWords1 = 0,
-                       countOfSpesialWords2 = 0,
-                       countOfSpesialWords3 = 0;
+    string str = "";
+   
     while(1)
     {
         getline(file, str, '\n');
@@ -75,6 +78,9 @@ void tread(string filename){
         for (int i = 0; i < 4; i++) {
                if (thread_array[i].joinable()) {
                    id = thread_array[i].get_id();
+                   if (find(vecOfThreadid.cbegin(), vecOfThreadid.cend(), id)==vecOfThreadid.cend()) {
+                       vecOfThreadid.push_back(id);
+                   }
                    thread_array[i].join();
                }
 //                   if (i != 0) {
@@ -92,15 +98,21 @@ void tread(string filename){
         }
         if (file.eof()) break;
     }
-    cout <<"countOfSpesialWords1= "<<countOfSpesialWords1<< endl;
-    cout <<"countOfSpesialWords2= "<<countOfSpesialWords2<< endl;
-    cout <<"countOfSpesialWords3= "<<countOfSpesialWords3<< endl;
-    cout <<"countOfWords= "<<countOfWords<< endl;
+//    cout <<"countOfSpesialWords1= "<<countOfSpesialWords1<< endl;
+//    cout <<"countOfSpesialWords2= "<<countOfSpesialWords2<< endl;
+//    cout <<"countOfSpesialWords3= "<<countOfSpesialWords3<< endl;
+//    cout <<"countOfWords= "<<countOfWords<< endl;
     file.close();
 }
 
 int main() {
+    vector <thread::id> vecOfThreadid;
     vector <string> vectorOfFiles;
+    string word1 = "Annotation", word2 = "Катя", word3 = "гроза", stringOfFiles = "";
+    unsigned long long countOfWords = 0;
+    unsigned long long countOfSpesialWords1 = 0,
+                       countOfSpesialWords2 = 0,
+                       countOfSpesialWords3 = 0;
     string path = "/Users/pk/Desktop/OI/TASKS/task 8/task 8/books"; // whatever the path is
     while(true) {
         cout << "---------NEW ITERATION----------"<< endl;
@@ -110,17 +122,24 @@ int main() {
             }
             else continue;
         }
-    for(auto i = 0; i< vectorOfFiles.size();i++) {
-        cout << vectorOfFiles[i]<< endl;
-    }
+   // for(auto i = 0; i< vecOfThreadid.size();i++) {
+     //   char timestr = vecOfThreadid[i];
+      //  timestr = vecOfThreadid[i];
+      //  auto timestr1 = timestr.str();
+       // timestr1 = timestr.str();
+       // stringOfFiles += timestr1;
+ //  }
     for(auto i = 0; i< vectorOfFiles.size();i++) {
     auto start = std::chrono::steady_clock::now();
-        tread(vectorOfFiles[i]);
+        tread(vectorOfFiles[i], vecOfThreadid, word1, word2, word3, countOfWords, countOfSpesialWords1, countOfSpesialWords2, countOfSpesialWords3);
+       
     auto finish = steady_clock::now();
-    cout << "A= " << duration_cast<milliseconds>(finish-start).count()<<endl;
+        OUT(vecOfThreadid, vectorOfFiles[i], duration_cast<milliseconds>(finish-start).count(), countOfWords, word1, countOfSpesialWords1, word2, countOfSpesialWords2, word3, countOfSpesialWords3);
+   // cout << "A= " << duration_cast<milliseconds>(finish-start).count()<<endl;
     }
         this_thread::sleep_for(chrono::milliseconds(10000));
-    }
     
+    
+    }
     return 0;
 }
