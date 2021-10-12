@@ -20,7 +20,6 @@
 #include <chrono>
 #define OUT(vecofThread, file_name, time, value, Word1, value1, Word2, value2, Word3, value3)(file  << file_name << "> || Time: <" << time << ">  || Common: <" << value << "> | <" << Word1 << ">: <" << value1 << "> |  <" << Word2 << ">: <" << value2 << "> | <" << Word3 << ">: <" << value3 << ">" << endl << endl)
 
-
 using namespace std;
 using namespace std::chrono;
 using namespace std::__fs::filesystem;
